@@ -1,5 +1,7 @@
 # JavaScript
 
+JavaScript=ECMAScript+DOM+BOM
+
 ## dom
 
 ## bom
@@ -16,3 +18,34 @@
 + `sessionStorage`和`localStorage`的区别在于，前者的数据只有在同一个浏览器窗口的同一个页面才能访问到，而后者的数据可以在同源窗口的所有页面中访问到。
 
 - 其他的存储方式还有`indexDB`，`webSQL`等，但是这些都是`HTML5`的规范，目前还没有被所有浏览器支持。
+
+
+## OOP
+
+### 继承
+
+```js
+function Parent(name){
+    this.name=name
+}
+
+function Child(name,age){
+    Parent.call(this,name)
+    this.age=age
+}
+inhert(Child,Parent)
+
+// ES6
+function inhert(child,parent){
+    Object.setPrototypeOf(child.prototype,parent.prototype)
+}
+
+// 圣杯模式
+function inhert(child,parent){
+    var F = function() {};  // create a new temporary empty function
+    F.prototype = Parent.prototype;  // set the prototype of the temporary function to the parent's prototype
+    Child.prototype = new F();  // set the child's prototype to a new instance of the temporary function
+    Child.prototype.constructor = Child;
+}
+
+```
