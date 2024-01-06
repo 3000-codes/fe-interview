@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <button id="btn">点击</button>
+    <script>
+        var btn = document.getElementById('btn');
+        const ab = new AbortController();
+        btn.onclick = function (e) {
+            console.log('点击了1');
+            console.log(this === e.target);
+        }
+        // btn.onclick = function () {
+        //     console.log('点击了2');
+        // }
+        // btn.onclick = function () {
+        //     console.log('点击了3');
+        // }
+
+        btn.addEventListener('click', function () {
+            console.log('点击了1');
+        })
+        btn.addEventListener('click', function () {
+            console.log('点击了2');
+        }, {
+            signal: ab.signal
+        })
+        btn.addEventListener('click', function () {
+            console.log('点击了3');
+            ab.abort();
+        })
+
+    </script>
+
+    <script>
+        let _value = 1;
+        // Object.defineProperty(window, 'a', {
+        //     get: function () {
+        //         return _value++
+        //     },
+        //     set: function (newVal) {
+        //         console.log('set');
+        //     }
+        // })
+        // console.log(a, a);
+        window.a = 1;
+        window = new Proxy(window, {
+            get: function (target, key, receiver) {
+                console.log('get');
+                // return Reflect.get(target, key, receiver)
+                if (key === 'a') {
+                    return _value++
+                }
+                return Reflect.get(target, key, receiver)
+            },
+            set: function (target, key, value, receiver) {
+                console.log('set');
+                return Reflect.set(target, key, value, receiver)
+            }
+        })
+        console.log(a, a);
+
+
+    </script>
+</body>
+
+</html>
