@@ -62,3 +62,50 @@ git revert <commit_hash>
 git reflog
 git reset --hard <commit_hash>
 ```
+
+# 浏览器
+
+### 浏览器的渲染过程
+
+1. 浏览器获取到html代码，然后开始解析html代码构建DOM树
+2. 解析过程中遇到css代码，开始构建CSSOM树
+3. DOM树和CSSOM树构建完成后开始生成渲染树
+4. 开始布局，计算每个节点的位置大小信息
+5. 将渲染树绘制到屏幕上
+6. 若解析过程中遇到script标签或link标签，则暂停解析html代码（阻塞），先执行js/css代码，js/css代码执行完毕后继续解析html代码
+
+PS：为什么要将css代码放在head标签中，js代码放在body标签中？
+* css代码放在head标签中，可以在页面渲染之前就加载css代码，这样可以避免页面渲染完成后再加载css代码导致页面闪烁的问题
+* js代码放在body标签中，可以在页面渲染完成后再加载js代码，这样可以避免js代码阻塞页面渲染的问题
+
+### 重排（回流, reflow）与重绘(repaint)
+
+* 重排：当页面中的元素发生了尺寸、位置、内容等变化时，浏览器需要重新计算元素的几何属性（位置、大小等），然后再将元素绘制到屏幕上，这个过程称为重排（回流）
+* 重绘：当页面中的元素发生了颜色、背景等变化时，浏览器只需要将元素绘制到屏幕上，这个过程称为重绘
+* 重排一定会引起重绘，重绘不一定会引起重排
+* 重排的代价比重绘的代价要高，因为重排需要重新计算元素的几何属性，而重绘只需要将元素绘制到屏幕上
+* 导致重排的原因：
+  + 页面首次渲染
+  + 浏览器窗口大小发生改变
+  + 元素尺寸、位置、内容发生改变
+  + 元素字体大小、样式发生改变
+  + 添加或删除可见的DOM元素
+  + 激活CSS伪类（如:hover）
+  + 查询某些属性或调用某些方法
+    - clientWidth、clientHeight、clientTop、clientLeft
+    - offsetWidth、offsetHeight、offsetTop、offsetLeft
+    - scrollWidth、scrollHeight、scrollTop、scrollLeft
+    - scrollIntoView()、scrollIntoViewIfNeeded()
+    - getComputedStyle()
+    - getBoundingClientRect()
+    - scrollTo()
+* 导致重绘的原因：
+  + 元素的颜色、背景发生改变
+  + 元素的可见性发生改变（visibility:hidden）
+  + 元素的背景图片发生改变
+  + 元素的轮廓发生改变（outline）
+  + 元素的阴影发生改变（box-shadow）
+  + 元素的透明度发生改变（opacity）
+  + 元素的变换发生改变（transform）
+  + 元素的过渡发生改变（transition）
+  + 元素的动画发生改变（animation）
