@@ -39,3 +39,19 @@ function microTask(fn) {
     textNode.data = '2'
 
 }
+```
+
+### 如何清理所有的定时器
+
+```js
+// 1. clearTimeout和clearInterval共用一个队列，所以只需要清理一个即可 {@link [timers](https://html.spec.whatwg.org/multipage/timers-and-user-prompts.html#dom-settimeout-dev)}
+// 2. 每次创建一个定时器，都会返回一个id，且id是递增的，所以可以通过最后一个id来清理所有的定时器
+
+setTimeout(() => {}, 0)
+setTimeout(() => {}, 0)
+serInterval(() => {}, 100)
+const lastId = setTimeout(() => {}, 0)
+for (let i = 0; i <= lastId; i++) {
+    clearTimeout(i)
+}
+```
