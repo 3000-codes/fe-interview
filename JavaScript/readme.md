@@ -52,6 +52,32 @@ JavaScript=ECMAScript+DOM+BOM
   + `dom.scrollTo(x,y)`，`dom.scrollTo(options)`: 滚动到指定位置
 * `dom.getBoundingClientRect()`，获取元素的位置信息，返回一个`DOMRect`对象，包含`top`，`left`，`bottom`，`right`，`width`，`height`等属性
 
+### 元素动画
+
+* `dom.animate(keyframes, options)`，创建一个动画，`keyframes`是一个数组，每个元素是一个关键帧，`options`是一个配置对象，包含`duration`，`delay`，`iterations`，`direction`，`fill`，`easing`等属性
+* `dom.getAnimations()`，获取元素上的所有动画
+
+```js
+const div = document.querySelector('div')
+const animation = div.animate([{
+        transform: 'translateX(0px)'
+    },
+    {
+        transform: 'translateX(100px)'
+    }
+], {
+    duration: 1000,
+    iterations: Infinity
+})
+div.onclick = function() {
+    if (animation.playState === 'paused') {
+        animation.play()
+    } else {
+        animation.pause()
+    }
+}
+```
+
 ## bom
 
 ### 事件

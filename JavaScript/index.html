@@ -9,6 +9,7 @@
 
 <body>
     <button id="btn">点击</button>
+    <div style="width: 500px;height: 500px;background-color: red;"></div>
     <script>
         var btn = document.getElementById('btn');
         const ab = new AbortController();
@@ -39,34 +40,24 @@
     </script>
 
     <script>
-        let _value = 1;
-        // Object.defineProperty(window, 'a', {
-        //     get: function () {
-        //         return _value++
-        //     },
-        //     set: function (newVal) {
-        //         console.log('set');
-        //     }
-        // })
-        // console.log(a, a);
-        window.a = 1;
-        window = new Proxy(window, {
-            get: function (target, key, receiver) {
-                console.log('get');
-                // return Reflect.get(target, key, receiver)
-                if (key === 'a') {
-                    return _value++
-                }
-                return Reflect.get(target, key, receiver)
-            },
-            set: function (target, key, value, receiver) {
-                console.log('set');
-                return Reflect.set(target, key, value, receiver)
-            }
+        const div = document.querySelector('div')
+        const animation = div.animate([{
+            transform: 'translateX(0px)'
+        },
+        {
+            transform: 'translateX(100px)'
+        }
+        ], {
+            duration: 1000,
+            iterations: Infinity
         })
-        console.log(a, a);
-
-
+        div.onclick = function () {
+            if (animation.playState === 'paused') {
+                animation.play()
+            } else {
+                animation.pause()
+            }
+        }
     </script>
 </body>
 
