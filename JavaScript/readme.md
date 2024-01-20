@@ -141,6 +141,25 @@ elem.dispatchEvent(event);
 
 * 其他的存储方式还有`indexDB`，`webSQL`等，但是这些都是`HTML5`的规范，目前还没有被所有浏览器支持。
 
+### 可以延迟执行的方法
+
+* `setTimeout`，延迟一段时间执行
+* `setInterval`，每隔一段时间执行一次
+* `setImmediate`，在下一次事件循环之前执行（node，IE10+）
+* `requestAnimationFrame`，在下一次重绘之前执行
+* `process.nextTick`，在当前事件循环之后执行（node）
+* `MutationObserver`，监听DOM变化，每次DOM变化后执行
+* `Promise`，`async/await`，在当前事件循环之后执行
+* `while(true){}`，阻塞当前线程
+* `alert`，`confirm`， `prompt`，阻塞当前线程
+* `XMLHttpRequest`，阻塞当前线程
+* `queueMicrotask`，在当前事件循环之后执行
+* `requestIdleCallback`，在浏览器空闲时执行
+
+微任务： `process.nextTick` ， `Promise` ， `MutationObserver` ， `queueMicrotask`
+
+宏任务： `setTimeout` ， `setInterval` ， `setImmediate` ， `requestAnimationFrame`
+
 ## OOP
 
 ### 继承
