@@ -1,28 +1,43 @@
-const Mock = require("mockjs")
+const express = require('express')
+const http = require('http')
 const { syncAll } = require('./models')
-const addAdmin = require('./services/admin.service')
-// require('dotenv').config()
+const app = express()
+const port = 3000
 
-const mockAdmin = () => {
-    const data = Mock.mock({
-        'admin|10': [{
-            loginId: '@string("lower", 5, 10)',
-            loginPwd: '@string("lower", 5, 10)',
-            name: '@cname',
-        }]
-    })
-    // console.log(data.admin);
-    data.admin.forEach(async admin => {
-        await addAdmin.addAdmin(admin)
-    })
-}
+app.get('/test/redirct', (req, res) => {
+    // res.send('Hello World!') //发送字符串
+    res.status(302).header('Location', 'http://www.baidu.com').end()//重定向
+})
+
+app.post('/test/post', (req, res) => {
+    res.send('Got a POST request')
+})
+
+app.put('/test/middlewares', (req, res, next) => {
+    console.log('Request Type:', req.method)
+    next()
+}, (req, res, next) => {
+    if (Math.random() > 0.5) {
+        next()
+    } else {
+        next(new Error('error'))
+    }
+}, (req, res) => {
+    // 如果前面的中间件没有出错，则执行这个中间件
+    res.send('Hello World!')
+}, (err, req, res, next) => {
+    // 如果前面的中间件出错，则执行这个中间件
+    console.error(err.stack)
+    res.status(500).send('Something broke!')
+})
 
 
-const main = async () => {
-    // await syncAll()
-    // await addAdmin.addAdmin()
-    // await addAdmin.deleteAdmin(1)
-    mockAdmin()
-}
+const server = http.createServer(app)
+syncAll()
 
-main()
+
+
+server.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+})
+

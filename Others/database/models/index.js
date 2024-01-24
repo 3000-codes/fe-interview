@@ -7,6 +7,7 @@ const Clazz = require('./clazz.model')
 // 一对多
 // 一个班级对应多个学生
 Clazz.hasMany(Student)
+Student.belongsTo(Clazz)
 
 /**
  * @description:
@@ -29,6 +30,11 @@ const syncAll = async () => {
     await sequelize.sync({ alter: true })
     console.log("All tables synced");
 }
+
+// (function () {
+//     authenticate()
+//     syncAll()
+// })()
 
 module.exports = {
     authenticate,

@@ -8,7 +8,7 @@ const sequelize = new Sequelize(process.env.DATABASE, process.env.ACCESSKEY, pro
     host: process.env.MYSQL_HOST,
     port: process.env.MYSQL_PORT,
     dialect: 'mysql', // support: mysql, mariadb, postgres, mssql
-    logging: true,
+    logging: !true,
 });
 
 module.exports =
