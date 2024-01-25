@@ -60,6 +60,14 @@ app.use('/test/single', (req, res, next) => {
 })
 
 
+const router = express.Router() // 创建路由器
+router.get('/', (req, res) => {
+    res.send('Birds home page')
+})
+router.get('/about', (req, res) => {
+    res.send('About birds')
+})
+app.use('/birds', router) // 将路由器挂载到应用程序的路径上
 
 
 const server = http.createServer(app)
