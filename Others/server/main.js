@@ -1,6 +1,7 @@
 const http = require('http')
 const path = require("path")
 const express = require('express')
+const cookieParser = require('cookie-parser')
 
 const { syncAll } = require('./models')
 const app = express()
@@ -9,12 +10,33 @@ const clientPath = path.resolve(__dirname, "..", "client", "dist")
 // console.log(clientPath);
 // app.use(express.static(clientPath)) // 静态服务器
 app.use("page", express.static(clientPath)) // xxx/page/xxx.html
+app.use(cookieParser("secretkey")) // 解析cookie
+
 app.get('/test/redirct', (req, res) => {
     // res.send('Hello World!') //发送字符串
     res.status(302).header('Location', 'http://www.baidu.com').end()//重定向
 })
 
 app.post('/test/post', (req, res) => {
+    res.send('Got a POST request')
+})
+
+// 处理cookie
+const whiteList = ['/test/login']
+const handleAuth = (req, res, mext) => {
+    let token = req.cookie.token
+    if (!token) token = req.headers.Authorization
+    if (!token || !whiteList.includes(req.path)) {
+        return res.status(403).send("403")
+    }
+    next()
+}
+app.use(handleAuth)
+
+app.post('/test/login', (req, res) => {
+    // res.setHeader('Set-Cookie', 'username=tom;max-age=900000')
+    res.cookie('username', 'tom', { maxAge: 900000 })
+    res.header("Authorization", "Bearer " + "token")
     res.send('Got a POST request')
 })
 

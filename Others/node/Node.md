@@ -1,3 +1,10 @@
+## node调试
+
+```bash
+node  --inspect  xxx.js
+# 将会开启一个调试服务器，可以通过chrome://inspect/#devices来访问
+```
+
 ## fs模块
 
 ### 写入流
