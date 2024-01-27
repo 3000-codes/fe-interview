@@ -4,12 +4,14 @@ const express = require('express')
 const cookieParser = require('cookie-parser')
 
 const { syncAll } = require('./models')
+const { handleCors, handleAuth } = require('./middlewares')
 const app = express()
 const port = 3000
 const clientPath = path.resolve(__dirname, "..", "client", "dist")
 // console.log(clientPath);
 // app.use(express.static(clientPath)) // 静态服务器
 app.use("page", express.static(clientPath)) // xxx/page/xxx.html
+
 app.use(cookieParser("secretkey")) // 解析cookie
 
 app.get('/test/redirct', (req, res) => {
@@ -21,16 +23,7 @@ app.post('/test/post', (req, res) => {
     res.send('Got a POST request')
 })
 
-// 处理cookie
-const whiteList = ['/test/login']
-const handleAuth = (req, res, mext) => {
-    let token = req.cookie.token
-    if (!token) token = req.headers.Authorization
-    if (!token || !whiteList.includes(req.path)) {
-        return res.status(403).send("403")
-    }
-    next()
-}
+
 app.use(handleAuth)
 
 app.post('/test/login', (req, res) => {
@@ -70,10 +63,6 @@ app.use((err, req, res, next) => {
     res.status(500).send('Something broke!')
 })
 
-// 404处理中间件
-app.use((req, res, next) => {
-    res.status(404).send('Sorry cant find that!')
-})
 
 // 单一路由处理中间件
 app.use('/test/single', (req, res, next) => {
@@ -91,6 +80,48 @@ router.get('/about', (req, res) => {
 })
 app.use('/birds', router) // 将路由器挂载到应用程序的路径上
 
+
+app.get('/test/jsonp', (req, res) => {
+    // 将请求参数中的callback取出来，然后将响应数据包裹在callback中返回
+    // jsonp的原理是利用script标签的src属性不受同源策略限制的特点
+    // 只支持get请求，而且会打断服务器的消息格式（只能返回纯文本）
+    const data = JSON.stringify({ name: "tom", age: 20 })
+    const { callback } = req.query
+    res
+        .header("Content-Type", "application/javascript")
+        .send(`${callback}(${data})`)
+
+    // client端
+    // <script>
+    //     function handleData(data){
+    //         console.log(data)
+    //     }
+    // </script>
+    // <script src="http://localhost:3000/test/jsonp?callback=handleData"></script>
+})
+
+app.use(handleCors)
+app.get('/test/cors', (req, res) => {
+    // 跨域资源共享
+    // 1. 服务器设置响应头
+    // 2. 客户端设置请求头
+    res.header("Access-Control-Allow-Origin", "http://localhost:8080")
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+    res.header("Access-Control-Allow-Headers", "X-Token,Content-Type")
+    res.send('cors')
+})
+app.get('/test/cors2', (req, res) => {
+    res.header("Access-Control-Allow-Origin", "http://localhost:5173")
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+    res.header("Access-Control-Allow-Headers", "X-Token,Content-Type")
+    res.send('cors2')
+})
+app.post('/test/cors3', (req, res) => {
+    // res.header("Access-Control-Allow-Origin", "*")
+    // res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+    // res.header("Access-Control-Allow-Headers", "X-Token,Content-Type")
+    res.send('cors3')
+})
 
 const server = http.createServer(app)
 syncAll()
